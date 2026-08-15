@@ -1016,6 +1016,11 @@ func TestDropByIndex(t *testing.T) {
 	is.Equal([]int{0, 1, 2, 3, 4}, DropByIndex([]int{0, 1, 2, 3, 4}, 5))
 	is.Equal([]int{0, 1, 2, 3, 4}, DropByIndex([]int{0, 1, 2, 3, 4}, 100))
 	is.Equal([]int{0, 1, 2, 3}, DropByIndex([]int{0, 1, 2, 3, 4}, -1))
+	// A negative index that is out of bounds must be ignored; it must not shift
+	// the offset used for subsequent drops.
+	is.Equal([]int{0, 1, 2, 3}, DropByIndex([]int{0, 1, 2, 3, 4}, -100, 4))
+	is.Equal([]int{0, 1, 2, 3}, DropByIndex([]int{0, 1, 2, 3, 4}, 4, -100))
+	is.Equal([]int{1, 3, 4}, DropByIndex([]int{0, 1, 2, 3, 4}, -100, 0, 2, -100))
 	is.Empty(DropByIndex([]int{}, 0, 1))
 	is.Empty(DropByIndex([]int{42}, 0, 1))
 	is.Empty(DropByIndex([]int{42}, 1, 0))

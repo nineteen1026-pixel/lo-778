@@ -629,12 +629,17 @@ func DropByIndex[T any, Slice ~[]T](collection Slice, indexes ...int) Slice {
 	result := make(Slice, 0, initialSize)
 	result = append(result, collection...)
 
+	// offset counts the elements actually dropped so far. It must not advance
+	// when an out-of-bounds index is skipped, otherwise the position of the
+	// next valid index would be miscomputed.
+	offset := 0
 	for i := range indexes {
-		if indexes[i]-i < 0 || indexes[i]-i >= initialSize-i {
+		if indexes[i]-offset < 0 || indexes[i]-offset >= initialSize-offset {
 			continue
 		}
 
-		result = append(result[:indexes[i]-i], result[indexes[i]-i+1:]...)
+		result = append(result[:indexes[i]-offset], result[indexes[i]-offset+1:]...)
+		offset++
 	}
 
 	return result
